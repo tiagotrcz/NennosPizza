@@ -6,4 +6,6 @@
     <color name="app_orange">#FECD2B</color>
     <color name="app_red">#E14D45</color>
     <color name="app_white">#FFFFFF</color>
+    <color name="app_black">#000000</color>
+    <color name="app_dark_gray">#4A4A4A</color>
 </resources>

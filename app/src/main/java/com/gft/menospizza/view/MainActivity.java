@@ -3,6 +3,7 @@ package com.gft.menospizza.view;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
@@ -25,6 +26,7 @@ import com.gft.menospizza.model.Ingredient;
 import com.gft.menospizza.model.Pizza;
 import com.gft.menospizza.util.Constants;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import retrofit2.Response;
@@ -39,6 +41,8 @@ public class MainActivity extends AppCompatActivity implements PizzaAdapter.OnCl
     private ProgressBar mProgressBar;
 
     private PizzaAdapter mAdapter;
+
+    private List<Ingredient> mIngredients;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -97,9 +101,9 @@ public class MainActivity extends AppCompatActivity implements PizzaAdapter.OnCl
         new IngredientsManager().getIngredients(new CustomRequestCallback<List<Ingredient>>() {
             @Override
             public void onSuccess(List<Ingredient> response) {
-                List<Ingredient> ingredients = response;
+                mIngredients = response;
 
-                getPizzas(ingredients);
+                getPizzas(mIngredients);
             }
 
             @Override
@@ -154,6 +158,7 @@ public class MainActivity extends AppCompatActivity implements PizzaAdapter.OnCl
     public void showPizzaDetails(Pizza pizza) {
         Intent intent = new Intent(mActivity, PizzaDetailsActivity.class);
         intent.putExtra(Constants.PIZZA, pizza);
+        intent.putParcelableArrayListExtra(Constants.INGREDIENTS, (ArrayList<? extends Parcelable>) mIngredients);
         startActivity(intent);
     }
 

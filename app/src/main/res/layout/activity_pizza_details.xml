@@ -17,7 +17,7 @@
         <android.support.design.widget.CollapsingToolbarLayout
             android:id="@+id/toolbar_layout"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:fitsSystemWindows="true"
             app:contentScrim="?attr/colorPrimary"
             app:layout_scrollFlags="scroll|exitUntilCollapsed"
@@ -42,5 +42,16 @@
     </android.support.design.widget.AppBarLayout>
 
     <include layout="@layout/content_pizza_details" />
+
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_gravity="bottom"
+        android:text="ADD TO CARD (R$10)"
+        android:textColor="@color/app_white"
+        android:textStyle="bold"
+        android:foreground="?android:attr/selectableItemBackground"
+        android:textSize="16sp"
+        android:background="@color/app_orange" />
 
 </android.support.design.widget.CoordinatorLayout>
