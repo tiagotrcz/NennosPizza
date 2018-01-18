@@ -13,13 +13,14 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.ListAdapter;
-import android.widget.ListView;
+import android.widget.Toast;
 
 import com.gft.menospizza.R;
 import com.gft.menospizza.adapter.IngredientsAdapter;
+import com.gft.menospizza.manager.CartManager;
+import com.gft.menospizza.manager.PizzaManager;
 import com.gft.menospizza.model.Ingredient;
 import com.gft.menospizza.model.Pizza;
 import com.gft.menospizza.util.Constants;
@@ -27,9 +28,13 @@ import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
-public class PizzaDetailsActivity extends AppCompatActivity {
+public class PizzaDetailsActivity extends BaseActivity implements IngredientsAdapter.OnIngredientChangedListener, View.OnClickListener {
 
     private Activity mActivity;
+    private Button btnAddToCart;
+    private Pizza mPizza;
+
+    private double mBasePrice;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,20 +43,26 @@ public class PizzaDetailsActivity extends AppCompatActivity {
 
         mActivity = PizzaDetailsActivity.this;
 
-        Pizza pizza = getIntent().getParcelableExtra(Constants.PIZZA);
-        List<Ingredient> ingredients = getIntent().getParcelableArrayListExtra(Constants.INGREDIENTS);
+        btnAddToCart = findViewById(R.id.btnAddToCart);
+        btnAddToCart.setOnClickListener(this);
 
-        setRecyclerView(pizza, ingredients);
+        mPizza = getIntent().getParcelableExtra(Constants.PIZZA);
+        List<Ingredient> ingredients = getIntent().getParcelableArrayListExtra(Constants.INGREDIENTS);
+        mBasePrice = getIntent().getDoubleExtra(Constants.BASE_PRICE, 0);
+
+        setTextAddToCartButton();
+
+        setRecyclerView(mPizza, ingredients);
 
         ImageView imgPizza = findViewById(R.id.imgPizza);
 
-        Picasso.with(this).load(pizza.getImageUrl()).into(imgPizza);
+        Picasso.with(this).load(mPizza.getImageUrl()).into(imgPizza);
 
-        setToolbar(pizza);
+        setToolbar(mPizza);
     }
 
     private void setRecyclerView(Pizza pizza, List<Ingredient> ingredients) {
-        RecyclerView rvIngredients = findViewById(R.id.rvIngredients);
+        RecyclerView rvIngredients = findViewById(R.id.rvCart);
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getBaseContext());
         rvIngredients.setLayoutManager(mLayoutManager);
         rvIngredients.setItemAnimator(new DefaultItemAnimator());
@@ -89,5 +100,39 @@ public class PizzaDetailsActivity extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onAdd(Ingredient ingredient) {
+        mBasePrice += ingredient.getPrice();
+        mPizza.getIngredients().add(ingredient.getId());
+        setTextAddToCartButton();
+    }
+
+    @Override
+    public void onRemove(Ingredient ingredient) {
+        mBasePrice -= ingredient.getPrice();
+        mPizza.getIngredients().remove((Integer) ingredient.getId());
+        setTextAddToCartButton();
+    }
+
+    private void setTextAddToCartButton() {
+        btnAddToCart.setText(String.format(getResources().getString(R.string.txt_add_to_cart),
+                new PizzaManager().formatPrice(mBasePrice)));
+    }
+
+    private void showToast() {
+        Toast.makeText(mActivity, "ADDED TO CART", Toast.LENGTH_LONG).show();
+    }
+
+    @Override
+    public void onClick(View v) {
+        mPizza.setTotalPrice(mBasePrice);
+
+        CartManager.getPizzas().add(mPizza);
+
+        showToast();
+
+        finish();
     }
 }

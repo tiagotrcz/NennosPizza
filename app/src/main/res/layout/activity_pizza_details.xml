@@ -44,10 +44,11 @@
     <include layout="@layout/content_pizza_details" />
 
     <Button
+        android:id="@+id/btnAddToCart"
         android:layout_width="match_parent"
         android:layout_height="50dp"
         android:layout_gravity="bottom"
-        android:text="ADD TO CARD (R$10)"
+        android:text="ADD TO CART (R$10)"
         android:textColor="@color/app_white"
         android:textStyle="bold"
         android:foreground="?android:attr/selectableItemBackground"

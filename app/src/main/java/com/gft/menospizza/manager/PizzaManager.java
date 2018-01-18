@@ -25,8 +25,12 @@ public class PizzaManager {
         this.mBusiness.getPizzas(callback);
     }
 
-    public String calculatePrice(double basePrice, List<Integer> ingredientsIds, List<Ingredient> ingredients) {
+    public double calculatePrice(double basePrice, List<Integer> ingredientsIds, List<Ingredient> ingredients) {
         return this.mBusiness.calculatePrice(basePrice, ingredientsIds, ingredients);
+    }
+
+    public String formatPrice(double price) {
+        return this.mBusiness.formatPrice(price);
     }
 
     public String getDescription(List<Integer> ingredientsIds, List<Ingredient> ingredients) {

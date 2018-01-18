@@ -5,9 +5,8 @@ import com.gft.menospizza.model.BasePizzaPrice;
 import com.gft.menospizza.model.Ingredient;
 import com.gft.menospizza.provider.PizzaProvider;
 import com.gft.menospizza.util.Constants;
+import com.gft.menospizza.util.PriceUtil;
 
-import java.text.NumberFormat;
-import java.util.Currency;
 import java.util.List;
 
 import retrofit2.Call;
@@ -43,22 +42,12 @@ public class PizzaBusiness {
         });
     }
 
-    public String calculatePrice(double basePrice, List<Integer> ingredientsIds, List<Ingredient> ingredients) {
-        double price = 0;
+    public String formatPrice(double price) {
+        return PriceUtil.formatPrice(price);
+    }
 
-        for (Ingredient ingredient : ingredients)
-            for (Integer id : ingredientsIds)
-                if (id == ingredient.getId())
-                    price += ingredient.getPrice();
-
-        price += basePrice;
-
-        NumberFormat format = NumberFormat.getCurrencyInstance();
-        format.setCurrency(Currency.getInstance("BRL"));
-
-        String priceFormatted = format.format(price);
-
-        return priceFormatted.replace('.', ',');
+    public double calculatePrice(double basePrice, List<Integer> ingredientsIds, List<Ingredient> ingredients) {
+        return PriceUtil.calculatePrice(basePrice, ingredientsIds, ingredients);
     }
 
     public String getDescription(List<Integer> ingredientsIds, List<Ingredient> ingredients) {

@@ -4,7 +4,10 @@ import com.gft.menospizza.interfaces.CustomRequestCallback;
 import com.gft.menospizza.model.Ingredient;
 import com.gft.menospizza.provider.IngredientsProvider;
 import com.gft.menospizza.util.Constants;
+import com.gft.menospizza.util.PriceUtil;
 
+import java.text.NumberFormat;
+import java.util.Currency;
 import java.util.List;
 
 import retrofit2.Call;
@@ -38,6 +41,18 @@ public class IngredientsBusiness {
                 callback.onFailure(t);
             }
         });
+    }
+
+    public String formatPrice(double price) {
+        return PriceUtil.formatPrice(price);
+    }
+
+    public boolean isDefaultIngredient(int ingredientId, List<Integer> ids) {
+        for (Integer ingredient : ids)
+            if (ingredient == ingredientId)
+                return true;
+
+        return false;
     }
 
 }

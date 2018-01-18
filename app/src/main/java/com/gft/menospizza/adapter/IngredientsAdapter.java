@@ -6,9 +6,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.TextView;
 
 import com.gft.menospizza.R;
+import com.gft.menospizza.manager.IngredientsManager;
 import com.gft.menospizza.model.Ingredient;
 
 import java.util.List;
@@ -20,33 +22,44 @@ import java.util.List;
 public class IngredientsAdapter extends RecyclerView.Adapter<IngredientsAdapter.ViewHolder> {
 
     private List<Ingredient> mIngredients;
-    private List<Integer> mInteger;
+    private List<Integer> mIngredientsIds;
     private Context mContext;
+    private OnIngredientChangedListener mListener;
 
-    public IngredientsAdapter(List<Ingredient> mIngredients, List<Integer> mInteger, Context mContext) {
-        this.mIngredients = mIngredients;
-        this.mInteger = mInteger;
-        this.mContext = mContext;
+    public IngredientsAdapter(List<Ingredient> ingredients, List<Integer> ingredientsIds, Context context) {
+        this.mIngredients = ingredients;
+        this.mIngredientsIds = ingredientsIds;
+        this.mContext = context;
+        this.mListener = (OnIngredientChangedListener) context;
     }
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         LayoutInflater inflater = LayoutInflater.from(parent.getContext());
-        ViewHolder viewHolder = null;
 
         View view = inflater.inflate(R.layout.item_list, parent, false);
 
-        viewHolder = new ViewHolder(view);
-
-        return viewHolder;
+        return new ViewHolder(view);
     }
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        Ingredient ingredient = mIngredients.get(position);
+        final Ingredient ingredient = mIngredients.get(position);
 
         holder.cbIngredient.setText(ingredient.getName());
-        holder.tvPrice.setText(String.format("R$%s", ingredient.getPrice()));
+        holder.tvPrice.setText(new IngredientsManager().formatPrice(ingredient.getPrice()));
+
+        holder.cbIngredient.setChecked(new IngredientsManager().isDefaultIngredient(ingredient.getId(), mIngredientsIds));
+
+        holder.cbIngredient.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked)
+                    mListener.onAdd(ingredient);
+                else
+                    mListener.onRemove(ingredient);
+            }
+        });
     }
 
     @Override
@@ -55,14 +68,22 @@ public class IngredientsAdapter extends RecyclerView.Adapter<IngredientsAdapter.
     }
 
 
+    public interface OnIngredientChangedListener {
+
+        void onAdd(Ingredient ingredient);
+
+        void onRemove(Ingredient ingredient);
+
+    }
+
     class ViewHolder extends RecyclerView.ViewHolder {
         CheckBox cbIngredient;
         TextView tvPrice;
 
         ViewHolder(View itemView) {
             super(itemView);
-            cbIngredient = itemView.findViewById(R.id.cbIngredients);
-            tvPrice = itemView.findViewById(R.id.tvPrice);
+            cbIngredient = itemView.findViewById(R.id.tvTotal);
+            tvPrice = itemView.findViewById(R.id.tvTotalPrice);
         }
     }
 

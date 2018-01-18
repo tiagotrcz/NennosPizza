@@ -30,11 +30,15 @@ public class PizzaAdapter extends RecyclerView.Adapter<PizzaAdapter.ViewHolder> 
     private Context mContext;
     private OnClick mListener;
 
+    private PizzaManager mManager;
+
     public PizzaAdapter(BasePizzaPrice pizzas, List<Ingredient> ingredients, Context context) {
         this.mPizzas = pizzas;
         this.mIngredients = ingredients;
         this.mContext = context;
         this.mListener = (OnClick) context;
+
+        this.mManager = new PizzaManager();
     }
 
     @Override
@@ -53,25 +57,28 @@ public class PizzaAdapter extends RecyclerView.Adapter<PizzaAdapter.ViewHolder> 
     public void onBindViewHolder(ViewHolder holder, int position) {
         final Pizza pizza = mPizzas.getPizzas().get(position);
 
+        final double pizzaPrice = mManager.calculatePrice(mPizzas.getBasePrice(), pizza.getIngredients(), mIngredients);
+
         Picasso.with(mContext).load(pizza.getImageUrl()).into(holder.imgPizza);
 
         holder.tvTitle.setText(pizza.getName());
 
         holder.tvDescription.setText(new PizzaManager().getDescription(pizza.getIngredients(), mIngredients));
 
-        holder.btnAddToCard.setText(new PizzaManager().calculatePrice(mPizzas.getBasePrice(), pizza.getIngredients(), mIngredients));
+        holder.btnAddToCard.setText(mManager.formatPrice(pizzaPrice));
 
         holder.btnAddToCard.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mListener.onAddToCart();
+                pizza.setTotalPrice(pizzaPrice);
+                mListener.onAddToCart(pizza);
             }
         });
 
         holder.imgPizza.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mListener.showPizzaDetails(pizza);
+                mListener.showPizzaDetails(pizzaPrice, pizza);
             }
         });
     }
@@ -82,9 +89,9 @@ public class PizzaAdapter extends RecyclerView.Adapter<PizzaAdapter.ViewHolder> 
     }
 
     public interface OnClick {
-        void onAddToCart();
+        void onAddToCart(Pizza pizza);
 
-        void showPizzaDetails(Pizza pizza);
+        void showPizzaDetails(double basePrice, Pizza pizza);
     }
 
     class ViewHolder extends RecyclerView.ViewHolder {
@@ -99,7 +106,7 @@ public class PizzaAdapter extends RecyclerView.Adapter<PizzaAdapter.ViewHolder> 
             imgPizza = itemView.findViewById(R.id.imgPizza);
             tvTitle = itemView.findViewById(R.id.tvTitle);
             tvDescription = itemView.findViewById(R.id.tvDescription);
-            btnAddToCard = itemView.findViewById(R.id.btnAddToCard);
+            btnAddToCard = itemView.findViewById(R.id.btnAddToCart);
             linearLayout = itemView.findViewById(R.id.linearLayout);
         }
     }

@@ -2,8 +2,10 @@ package com.gft.menospizza.view;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Parcelable;
+import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
@@ -19,19 +21,22 @@ import android.widget.Toast;
 import com.gft.menospizza.R;
 import com.gft.menospizza.adapter.PizzaAdapter;
 import com.gft.menospizza.interfaces.CustomRequestCallback;
+import com.gft.menospizza.manager.CartManager;
 import com.gft.menospizza.manager.IngredientsManager;
 import com.gft.menospizza.manager.PizzaManager;
 import com.gft.menospizza.model.BasePizzaPrice;
+import com.gft.menospizza.model.Cart;
 import com.gft.menospizza.model.Ingredient;
 import com.gft.menospizza.model.Pizza;
 import com.gft.menospizza.util.Constants;
+import com.google.gson.Gson;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import retrofit2.Response;
 
-public class MainActivity extends AppCompatActivity implements PizzaAdapter.OnClick {
+public class MainActivity extends BaseActivity implements PizzaAdapter.OnClick {
 
     private static String TAG = MainActivity.class.getSimpleName();
 
@@ -44,12 +49,18 @@ public class MainActivity extends AppCompatActivity implements PizzaAdapter.OnCl
 
     private List<Ingredient> mIngredients;
 
+    private double mBasePrice;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
         mActivity = MainActivity.this;
+
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(mActivity);
+
+        getSavedCart(prefs);
 
         setProgressBar();
 
@@ -60,6 +71,15 @@ public class MainActivity extends AppCompatActivity implements PizzaAdapter.OnCl
         getIngredients();
     }
 
+    private void getSavedCart(SharedPreferences prefs) {
+        Gson gson = new Gson();
+        String json = prefs.getString(Constants.CART, "");
+        Cart cart = gson.fromJson(json, Cart.class);
+
+        CartManager.getPizzas().addAll(cart.getPizzas());
+        CartManager.getDrinks().addAll(cart.getDrinks());
+    }
+
     private void setProgressBar() {
         mProgressBar = findViewById(R.id.progressBar);
 
@@ -67,7 +87,7 @@ public class MainActivity extends AppCompatActivity implements PizzaAdapter.OnCl
     }
 
     private void setRecyclerView() {
-        mRecycler = findViewById(R.id.recyclerView);
+        mRecycler = findViewById(R.id.rvDrinks);
 
         mRecycler.addItemDecoration(new DividerItemDecoration(mActivity,
                 DividerItemDecoration.VERTICAL));
@@ -80,6 +100,19 @@ public class MainActivity extends AppCompatActivity implements PizzaAdapter.OnCl
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                Intent intent = new Intent(mActivity, CartActivity.class);
+                startActivity(intent);
+                return true;
+            case R.id.itCreate:
+                Pizza pizza = new Pizza();
+                pizza.setName("Custom Pizza");
+                showPizzaDetails(mBasePrice, pizza);
+                return true;
+        }
+
         return super.onOptionsItemSelected(item);
     }
 
@@ -128,6 +161,8 @@ public class MainActivity extends AppCompatActivity implements PizzaAdapter.OnCl
 
                 setAdapter(basePizzaPrice, ingredients);
 
+                mBasePrice = basePizzaPrice.getBasePrice();
+
                 mProgressBar.setVisibility(View.GONE);
                 mRecycler.setVisibility(View.VISIBLE);
             }
@@ -150,13 +185,16 @@ public class MainActivity extends AppCompatActivity implements PizzaAdapter.OnCl
     }
 
     @Override
-    public void onAddToCart() {
+    public void onAddToCart(Pizza pizza) {
+        CartManager.getPizzas().add(pizza);
+
         Toast.makeText(mActivity, "ADDED TO CART", Toast.LENGTH_LONG).show();
     }
 
     @Override
-    public void showPizzaDetails(Pizza pizza) {
+    public void showPizzaDetails(double basePrice, Pizza pizza) {
         Intent intent = new Intent(mActivity, PizzaDetailsActivity.class);
+        intent.putExtra(Constants.BASE_PRICE, basePrice);
         intent.putExtra(Constants.PIZZA, pizza);
         intent.putParcelableArrayListExtra(Constants.INGREDIENTS, (ArrayList<? extends Parcelable>) mIngredients);
         startActivity(intent);

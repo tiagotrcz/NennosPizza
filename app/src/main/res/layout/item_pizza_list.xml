@@ -46,7 +46,7 @@
             android:textColor="@android:color/black"
             android:textSize="20sp"
             android:textStyle="bold"
-            app:layout_constraintBottom_toTopOf="@+id/btnAddToCard"
+            app:layout_constraintBottom_toTopOf="@+id/btnAddToCart"
             app:layout_constraintEnd_toEndOf="@+id/linearLayout"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -64,12 +64,12 @@
             android:text="Description"
             android:textColor="@android:color/darker_gray"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/btnAddToCard"
+            app:layout_constraintEnd_toStartOf="@+id/btnAddToCart"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/tvTitle" />
 
         <Button
-            android:id="@+id/btnAddToCard"
+            android:id="@+id/btnAddToCart"
             android:layout_width="80dp"
             android:layout_height="30dp"
             android:layout_marginBottom="8dp"

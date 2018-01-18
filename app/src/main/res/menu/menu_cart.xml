@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item android:id="@+id/itAddDrink"
+        android:icon="@drawable/ic_local_drink_24dp"
+        android:title="@string/add_a_drink"
+        app:showAsAction="always" />
+
+</menu>

@@ -20,6 +20,7 @@ public class Pizza implements Parcelable {
     private String imageUrl;
     @SerializedName("ingredients")
     private List<Integer> ingredients;
+    private double totalPrice;
 
     public String getName() {
         return name;
@@ -45,6 +46,13 @@ public class Pizza implements Parcelable {
         this.ingredients = ingredients;
     }
 
+    public double getTotalPrice() {
+        return totalPrice;
+    }
+
+    public void setTotalPrice(double totalPrice) {
+        this.totalPrice = totalPrice;
+    }
 
     @Override
     public int describeContents() {
@@ -56,6 +64,7 @@ public class Pizza implements Parcelable {
         dest.writeString(this.name);
         dest.writeString(this.imageUrl);
         dest.writeList(this.ingredients);
+        dest.writeDouble(this.totalPrice);
     }
 
     public Pizza() {
@@ -66,9 +75,10 @@ public class Pizza implements Parcelable {
         this.imageUrl = in.readString();
         this.ingredients = new ArrayList<Integer>();
         in.readList(this.ingredients, Integer.class.getClassLoader());
+        this.totalPrice = in.readDouble();
     }
 
-    public static final Parcelable.Creator<Pizza> CREATOR = new Parcelable.Creator<Pizza>() {
+    public static final Creator<Pizza> CREATOR = new Creator<Pizza>() {
         @Override
         public Pizza createFromParcel(Parcel source) {
             return new Pizza(source);
