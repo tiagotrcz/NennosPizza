@@ -14,6 +14,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.gft.menospizza.R;
 import com.gft.menospizza.adapter.CartAdapter;
@@ -57,6 +58,8 @@ public class CartActivity extends BaseActivity implements CartAdapter.OnRemoveIt
                 final ProgressDialog progressDialog = new ProgressDialog(mActivity);
                 progressDialog.setTitle("Sending order");
                 progressDialog.setMessage("Wait...");
+                progressDialog.setCancelable(false);
+                progressDialog.show();
 
                 Order order = new Order();
                 order.setPizzas(CartManager.getPizzas());
@@ -71,9 +74,9 @@ public class CartActivity extends BaseActivity implements CartAdapter.OnRemoveIt
                 new OrderManager().sendOrder(new CustomRequestCallback<Response<ResponseBody>>() {
                     @Override
                     public void onSuccess(Response<ResponseBody> response) {
-                        progressDialog.dismiss();
-
                         CartManager.removeAll();
+
+                        progressDialog.dismiss();
 
                         Intent intent = new Intent(mActivity, ConfirmationActivity.class);
                         startActivity(intent);
@@ -85,13 +88,13 @@ public class CartActivity extends BaseActivity implements CartAdapter.OnRemoveIt
                     @Override
                     public void onFailure(Throwable throwable) {
                         progressDialog.dismiss();
-                        Log.d(TAG, throwable.getMessage());
+                        Toast.makeText(mActivity, throwable.getMessage(), Toast.LENGTH_SHORT).show();
                     }
 
                     @Override
                     public void onFailure(String message) {
                         progressDialog.dismiss();
-                        Log.d(TAG, message);
+                        Toast.makeText(mActivity, message, Toast.LENGTH_SHORT).show();
                     }
                 }, order);
 

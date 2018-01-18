@@ -6,7 +6,6 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.preference.PreferenceManager;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -76,8 +75,10 @@ public class MainActivity extends BaseActivity implements PizzaAdapter.OnClick {
         String json = prefs.getString(Constants.CART, "");
         Cart cart = gson.fromJson(json, Cart.class);
 
-        CartManager.getPizzas().addAll(cart.getPizzas());
-        CartManager.getDrinks().addAll(cart.getDrinks());
+        if (cart != null) {
+            CartManager.getPizzas().addAll(cart.getPizzas());
+            CartManager.getDrinks().addAll(cart.getDrinks());
+        }
     }
 
     private void setProgressBar() {
@@ -141,12 +142,12 @@ public class MainActivity extends BaseActivity implements PizzaAdapter.OnClick {
 
             @Override
             public void onFailure(Throwable throwable) {
-                Log.e(TAG, throwable.getMessage());
+                Toast.makeText(mActivity, throwable.getMessage(), Toast.LENGTH_SHORT).show();
             }
 
             @Override
             public void onFailure(String message) {
-                Log.e(TAG, message);
+                Toast.makeText(mActivity, message, Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -169,12 +170,12 @@ public class MainActivity extends BaseActivity implements PizzaAdapter.OnClick {
 
             @Override
             public void onFailure(Throwable throwable) {
-                Log.e(TAG, throwable.getMessage());
+                Toast.makeText(mActivity, throwable.getMessage(), Toast.LENGTH_SHORT).show();
             }
 
             @Override
             public void onFailure(String message) {
-                Log.e(TAG, message);
+                Toast.makeText(mActivity, message, Toast.LENGTH_SHORT).show();
             }
         });
     }

@@ -66,12 +66,12 @@ public class DrinkActivity extends BaseActivity implements DrinksAdapter.OnAddDr
 
             @Override
             public void onFailure(Throwable throwable) {
-                Log.e(TAG, throwable.getMessage());
+                Toast.makeText(mActivity, throwable.getMessage(), Toast.LENGTH_SHORT).show();
             }
 
             @Override
             public void onFailure(String message) {
-                Log.e(TAG, message);
+                Toast.makeText(mActivity, message, Toast.LENGTH_SHORT).show();
             }
         });
     }

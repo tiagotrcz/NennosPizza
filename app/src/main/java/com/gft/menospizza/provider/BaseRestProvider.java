@@ -1,5 +1,7 @@
 package com.gft.menospizza.provider;
 
+import com.gft.menospizza.util.Constants;
+
 import okhttp3.OkHttpClient;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
@@ -14,6 +16,8 @@ public abstract class BaseRestProvider {
 
     public BaseRestProvider(String url) {
         OkHttpClient.Builder httpClient = new OkHttpClient.Builder();
+        httpClient.readTimeout(Constants.READ_TIMEOUT_VALUE, Constants.READ_TIMEOUT_UNIT);
+        httpClient.connectTimeout(Constants.CONNECT_TIMEOUT_VALUE, Constants.CONNECT_TIMEOUT_UNIT);
 
         Retrofit.Builder builder = new Retrofit.Builder().baseUrl(url).addConverterFactory(GsonConverterFactory.create());
 
