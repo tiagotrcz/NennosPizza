@@ -1,8 +1,8 @@
 <resources>
-    <string name="app_name">Meno\'s Pizza</string>
+    <string name="app_name">Neno\'s Pizza</string>
     <string name="title_activity_pizza_details">PizzaDetailsActivity</string>
     <string name="action_settings">Settings</string>
-    <string name="txt_app_title">MENNO\'S PIZZA</string>
+    <string name="txt_app_title">NENNO\'S PIZZA</string>
     <string name="create_new_pizza">create new pizza</string>
     <string name="txt_ingredients">INGREDIENTS</string>
     <string name="txt_add_to_cart">ADD TO CART (%1$s)</string>
